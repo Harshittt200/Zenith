@@ -1,0 +1,91 @@
+{
+    "tasks": [
+        {
+            "id": "task-rem-1782463229",
+            "title": "read",
+            "deadline": "2026-06-27T16:00:00Z",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": true,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782463229-1",
+                    "title": "Perform reminder action",
+                    "completed": true
+                }
+            ],
+            "priorityScore": 0
+        },
+        {
+            "id": "task-rem-1782549854",
+            "title": "Eat food",
+            "deadline": "2026-06-27T14:14:27",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": false,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782549854-1",
+                    "title": "Perform reminder action",
+                    "completed": false
+                }
+            ],
+            "priorityScore": 83
+        },
+        {
+            "id": "task-rem-1782549938",
+            "title": "Eat food",
+            "deadline": "2026-06-27T14:15:51",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": false,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782549938-1",
+                    "title": "Perform reminder action",
+                    "completed": false
+                }
+            ],
+            "priorityScore": 83
+        },
+        {
+            "id": "task-rem-1782561460",
+            "title": "No tasks remaining",
+            "deadline": "2026-06-28T10:00:00",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": false,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782561460-1",
+                    "title": "Perform reminder action",
+                    "completed": false
+                }
+            ],
+            "priorityScore": 83
+        }
+    ],
+    "habits": [
+        {
+            "id": "habit-py-1",
+            "name": "Deep Work Session (90 min)",
+            "frequency": "daily",
+            "time": "09:00",
+            "streak": 5,
+            "history": {
+                "2026-06-20": true
+            }
+        }
+    ],
+    "settings": {
+        "username": "Harshit",
+        "dailyFocusTarget": 240,
+        "voiceURI": "default",
+        "pitch": 1.0,
+        "rate": 1.0
+    }
+}

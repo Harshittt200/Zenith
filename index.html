@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Zenith - An AI-powered productivity companion for intelligent task planning, prioritizing, calendar integration, voice assistance, and habit tracking.">
+    <title>Zenith // AI Productivity Companion</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="light-mode">
+    <!-- Ambient Background Gradients -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <div class="app-container ai-collapsed">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 24 24" width="28" height="28">
+                        <defs>
+                            <linearGradient id="ribbon-top" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FCA5A5" />
+                                <stop offset="100%" stop-color="#EF4444" />
+                            </linearGradient>
+                            <linearGradient id="ribbon-mid" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#EF4444" />
+                                <stop offset="100%" stop-color="#DC2626" />
+                            </linearGradient>
+                            <linearGradient id="ribbon-bot" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#DC2626" />
+                                <stop offset="100%" stop-color="#7F1D1D" />
+                            </linearGradient>
+                        </defs>
+                        <!-- 3D Folded Ribbon Z -->
+                        <!-- Bottom Fold -->
+                        <polygon points="4,15 16,12 20,14 8,17" fill="url(#ribbon-bot)"></polygon>
+                        <!-- Middle Connecting Fold -->
+                        <polygon points="20,8 8,11 4,15 16,12" fill="url(#ribbon-mid)"></polygon>
+                        <!-- Top Fold -->
+                        <polygon points="4,9 16,6 20,8 8,11" fill="url(#ribbon-top)"></polygon>
+                    </svg>
+                </div>
+                <h1>Zenith</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-view="tasks" id="nav-tasks">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>Tasks & Planner</span>
+                </button>
+                <button class="nav-item" data-view="calendar" id="nav-calendar">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span>Calendar</span>
+                </button>
+                <button class="nav-item" data-view="habits" id="nav-habits">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                    </svg>
+                    <span>Habits & Goals</span>
+                </button>
+                <button class="nav-item" data-view="settings" id="nav-settings">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>Settings</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar" id="user-avatar-initial">J</div>
+                    <div class="user-info">
+                        <span class="user-name" id="user-display-name">Guest User</span>
+                        <span class="user-status">Deep Work Mode</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="app-header">
+                <div class="header-search">
+                    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle Sidebar">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <div class="search-box">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" placeholder="Search tasks, priorities, calendar..." id="search-input">
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <!-- Quick notification toggler simulator -->
+                    <button class="header-btn" id="notify-sim-btn" title="Simulate AI Context Reminder">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span class="btn-badge"></span>
+                    </button>
+                    <!-- Quick Theme toggle -->
+                    <button class="header-btn" id="theme-toggle" title="Toggle Theme">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="sun-icon"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    </button>
+                    <!-- AI Assistant toggle -->
+                    <button class="header-btn" id="header-ai-toggle-btn" title="Toggle AI Companion" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.15); color: var(--neon-purple); cursor: pointer; transition: var(--transition-smooth);">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="color: #7C3AED;">
+                            <!-- Main bubble with tail and star cutout inside -->
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3c4.7 0 8.5 3.8 8.5 8.5c0 3.8-2.5 7-6 8c-1 .3-1.5 1-2 2c-.3-1-.8-1.7-1.8-2c-3.7-1-6.7-4.2-6.7-8C4 6.8 7.8 3 12 3zm0 5c0 2 1.3 3.3 3.3 3.3c-2 0-3.3 1.3-3.3 3.3c0-2-1.3-3.3-3.3-3.3c2 0 3.3-1.3 3.3-3.3z"></path>
+                            <!-- Top-right solid small star -->
+                            <path d="M19.5 2c0 1 .7 1.7 1.7 1.7c-1 0-1.7.7-1.7 1.7c0-1-.7-1.7-1.7-1.7c1 0 1.7-.7 1.7-1.7z"></path>
+                        </svg>
+                    </button>
+                    <div class="current-date-pill" id="header-date">Friday, June 26</div>
+                </div>
+            </header>
+
+            <!-- View Containers -->
+            <div class="view-content">
+
+                <!-- 1. DASHBOARD VIEW -->
+                <section class="view-section active" id="view-dashboard">
+                    <div class="welcome-banner">
+                        <div class="welcome-text">
+                            <h2>Rise and Shine, <span class="user-greeting-name">Guest</span>!</h2>
+                            <p>Zenith has optimized your workflow. You have <span class="high-priority-count" id="dash-high-count">0</span> high-energy tasks scheduled for today.</p>
+                        </div>
+                        <div class="focus-mode-toggle-card">
+                            <span class="focus-label">Deep Focus Shield</span>
+                            <label class="switch">
+                                <input type="checkbox" id="focus-shield-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="metrics-grid">
+                        <div class="metric-card glass">
+                            <div class="metric-icon completion">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <div class="metric-data">
+                                <h3>Task Completion</h3>
+                                <div class="metric-val" id="metric-completion">0%</div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" id="bar-completion" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="metric-icon energy">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            </div>
+                            <div class="metric-data">
+                                <h3>Focus Score</h3>
+                                <div class="metric-val" id="metric-focus-score">82/100</div>
+                                <span class="metric-sub" id="focus-score-status">Optimal cognitive flow</span>
+                            </div>
+                        </div>
+                        <div class="metric-card glass">
+                            <div class="metric-icon streak">
+                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                                </svg>
+                            </div>
+                            <div class="metric-data">
+                                <h3>Habit Streak</h3>
+                                <div class="metric-val" id="metric-habit-streak">4 Days</div>
+                                <span class="metric-sub" id="habit-streak-status">Keep the fire burning!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Main Grid -->
+                    <div class="dashboard-grid">
+                        <!-- Upcoming Tasks Priority Panel -->
+                        <div class="dashboard-card glass col-2">
+                            <div class="card-header">
+                                <div>
+                                    <h3>Zenith Priority Matrix</h3>
+                                    <p class="subtitle">AI-prioritized roadmap for today</p>
+                                </div>
+                                <button class="btn-text" id="dash-view-all-tasks">View All</button>
+                            </div>
+                            <div class="task-mini-list" id="dashboard-task-list">
+                                <!-- Tasks injected dynamically -->
+                                <div class="empty-state">
+                                    <p>No tasks remaining! Add some in the Tasks tab or ask Zenith to recommend something.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Companion Insights Feed -->
+                        <div class="dashboard-card glass">
+                            <div class="card-header">
+                                <h3>Personal Insights</h3>
+                            </div>
+                            <div class="insights-feed" id="insights-feed-container">
+                                <!-- Insights injected dynamically -->
+                                <div class="insight-item">
+                                    <div class="insight-indicator green"></div>
+                                    <div class="insight-content">
+                                        <h4>Peak Energy Alert</h4>
+                                        <p>You accomplish most high-difficulty work between 10 AM and 12 PM. Zenith has scheduled your core assignments then.</p>
+                                    </div>
+                                </div>
+                                <div class="insight-item">
+                                    <div class="insight-indicator purple"></div>
+                                    <div class="insight-content">
+                                        <h4>Fatigue Warning</h4>
+                                        <p>Working 3 hours continuously decreases performance by 25%. Click "AI Optimize Schedule" in Calendar to insert adaptive smart breaks.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature Showcase & Capabilities Section -->
+                    <div class="dashboard-showcase">
+                        <div class="showcase-header">
+                            <h2>Architected for Cognitive Peak Flow</h2>
+                            <p>Discover the core intelligence engines running your Zenith workspace.</p>
+                        </div>
+                        <div class="showcase-grid">
+                            <div class="showcase-card" data-feature="langgraph" style="cursor: pointer;">
+                                <div class="showcase-icon">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                </div>
+                                <h4>LangGraph AI Companion</h4>
+                                <p>Conversational scheduling system powered by stateful agent graphs. It translates voice or text requests directly into prioritized checklists.</p>
+                            </div>
+                            <div class="showcase-card" data-feature="timeblocking" style="cursor: pointer;">
+                                <div class="showcase-icon">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                </div>
+                                <h4>Dynamic Timeblocking</h4>
+                                <p>A scheduling scheduler that allocates high-energy work blocks in the morning and automatically injects guided cognitive rest breaks to avoid fatigue.</p>
+                            </div>
+                            <div class="showcase-card" data-feature="habits" style="cursor: pointer;">
+                                <div class="showcase-icon">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                                    </svg>
+                                </div>
+                                <h4>Habit Ritual Analytics</h4>
+                                <p>Build daily consistency grids using 7-day dot trackers. Toggling completions updates focus metrics and streak parameters instantly.</p>
+                            </div>
+                            <div class="showcase-card" data-feature="speech" style="cursor: pointer;">
+                                <div class="showcase-icon">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                                </div>
+                                <h4>Speech Synthesis Reminders</h4>
+                                <p>A background daemon checks active task deadlines. Upon reaching a target milestone, the system triggers voice warnings and visual notifications.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Footer -->
+                    <footer class="dashboard-footer">
+                        <div class="footer-cols">
+                            <div class="footer-col brand-col">
+                                <div class="footer-brand" style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                                    <svg viewBox="0 0 24 24" width="20" height="20">
+                                        <polygon points="4,15 16,12 20,14 8,17" fill="#7F1D1D"></polygon>
+                                        <polygon points="20,8 8,11 4,15 16,12" fill="#DC2626"></polygon>
+                                        <polygon points="4,9 16,6 20,8 8,11" fill="#EF4444"></polygon>
+                                    </svg>
+                                    <span style="font-weight: 700; font-family: var(--font-title); font-size: 16px; color: var(--text-bright);">Zenith</span>
+                                </div>
+                                <p style="line-height: 1.6; font-size: 13px; color: var(--text-muted);">An autonomous AI-powered cognitive planner and productivity operating system designed to structure task blocking, habits, and peak flow.</p>
+                            </div>
+                            <div class="footer-col">
+                                <span class="col-title">EXPLORE</span>
+                                <a href="#" class="footer-link">Dashboard overview</a>
+                                <a href="#" class="footer-link">Autonomous Planner</a>
+                                <a href="#" class="footer-link">Timeblocked Calendar</a>
+                                <a href="#" class="footer-link">Habits &amp; Rituals</a>
+                            </div>
+                            <div class="footer-col">
+                                <span class="col-title">SYSTEM INTEGRATIONS</span>
+                                <a href="#" class="footer-link">Google Calendar Sync</a>
+                                <a href="#" class="footer-link">LangGraph Chat Companion</a>
+                                <a href="#" class="footer-link">Browser Speech Synthesis</a>
+                                <a href="#" class="footer-link">Local Storage Sync</a>
+                            </div>
+                        </div>
+                        <div class="footer-bottom">
+                            <span class="copyright">&copy; 2026 Zenith Workspace OS &bull; Zenith is an autonomous scheduler, not a task master.</span>
+                            <span class="calibration">System Calibrated &bull; Refreshed dynamically via LLM state graphs.</span>
+                        </div>
+                    </footer>
+                </section>
+
+                <!-- 2. TASKS & PLANNER VIEW -->
+                <section class="view-section" id="view-tasks">
+                    <div class="section-header">
+                        <div>
+                            <h2>Tasks &amp; Autonomous Planner</h2>
+                            <p>Add tasks and let Zenith arrange them based on deadlines, energy requirement, and strategic value.</p>
+                        </div>
+                        <button class="btn btn-primary" id="open-task-modal-btn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span>Add Custom Task</span>
+                        </button>
+                    </div>
+
+                    <!-- Quick Task Input Card -->
+                    <div class="quick-add-task-card glass">
+                        <input type="text" placeholder="Quickly add a task and press Enter... (e.g. 'Draft marketing proposals tomorrow')" id="quick-task-input">
+                        <button class="btn btn-secondary" id="quick-task-submit">AI Parse</button>
+                    </div>
+
+                    <!-- Filters and Tabs -->
+                    <div class="task-filters">
+                        <div class="filter-group">
+                            <button class="filter-tab active" data-filter="all">All</button>
+                            <button class="filter-tab" data-filter="pending">Active</button>
+                            <button class="filter-tab" data-filter="completed">Completed</button>
+                        </div>
+                        <div class="sort-selector">
+                            <label for="sort-select">Sort By:</label>
+                            <select id="sort-select">
+                                <option value="ai-priority">Zenith Priority Index (AI)</option>
+                                <option value="deadline">Deadline Proximity</option>
+                                <option value="difficulty">Energy Difficulty</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Task Grid / List -->
+                    <div class="task-master-container" id="task-master-list">
+                        <!-- Injected JS -->
+                    </div>
+                </section>
+
+                <!-- 3. CALENDAR VIEW -->
+                <section class="view-section" id="view-calendar">
+                    <div class="section-header">
+                        <div>
+                            <h2>AI-Scheduled Calendar</h2>
+                            <p>Zenith blocks time slots automatically. Dynamic conflicts are resolved in real-time.</p>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn btn-secondary" id="gcal-sync-btn" style="display: flex; align-items: center; gap: 6px;">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"></path>
+                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"></path>
+                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22c-.87-2.6-2.87-4.53-6.19-4.53z"></path>
+                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"></path>
+                                </svg>
+                                <span>Google Calendar</span>
+                            </button>
+                            <button class="btn btn-neon" id="ai-optimize-schedule-btn" style="display: flex; align-items: center; gap: 6px;">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                <span>AI Optimize Blocks</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-layout glass">
+                        <!-- Calendar Header controls -->
+                        <div class="calendar-header-controls">
+                            <button class="calendar-arrow-btn" id="cal-prev-week">&lt;</button>
+                            <h3 id="calendar-week-range">June 22 - June 28, 2026</h3>
+                            <button class="calendar-arrow-btn" id="cal-next-week">&gt;</button>
+                        </div>
+                        <!-- Week days grid representation -->
+                        <div class="calendar-grid">
+                            <div class="calendar-days-header" id="calendar-days-header-row">
+                                <!-- Dynamic day columns header -->
+                            </div>
+                            <div class="calendar-time-body">
+                                <!-- Hour lines & event items injected dynamically -->
+                                <div class="calendar-time-column">
+                                    <div class="time-label">09:00 AM</div>
+                                    <div class="time-label">10:00 AM</div>
+                                    <div class="time-label">11:00 AM</div>
+                                    <div class="time-label">12:00 PM</div>
+                                    <div class="time-label">01:00 PM</div>
+                                    <div class="time-label">02:00 PM</div>
+                                    <div class="time-label">03:00 PM</div>
+                                    <div class="time-label">04:00 PM</div>
+                                    <div class="time-label">05:00 PM</div>
+                                </div>
+                                <div class="calendar-events-grid" id="calendar-events-grid-body">
+                                    <!-- Blocks go here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. HABITS VIEW -->
+                <section class="view-section" id="view-habits">
+                    <div class="section-header">
+                        <div>
+                            <h2>Habits &amp; Core Rituals</h2>
+                            <p>Daily routines build long-term success. Zenith checks in on your habits periodically.</p>
+                        </div>
+                        <button class="btn btn-primary" id="add-habit-btn">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span>Create Habit</span>
+                        </button>
+                    </div>
+
+                    <div class="habits-container" id="habits-master-list">
+                        <!-- Habits loaded dynamically -->
+                    </div>
+                </section>
+
+                <!-- 5. SETTINGS VIEW -->
+                <section class="view-section" id="view-settings">
+                    <div class="section-header">
+                        <div>
+                            <h2>System Configurations</h2>
+                            <p>Calibrate your AI Companion and user profile preferences.</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="settings-card glass">
+                            <h3>User Profile Settings</h3>
+                            <div class="setting-form-group">
+                                <label for="setting-username">Display Name</label>
+                                <input type="text" id="setting-username" value="Guest User">
+                            </div>
+                            <div class="setting-form-group">
+                                <label for="setting-focus-goal">Daily Focus Target (Minutes)</label>
+                                <input type="number" id="setting-focus-goal" value="240" min="30" max="600">
+                            </div>
+                            <button class="btn btn-primary" id="save-profile-btn">Save Preferences</button>
+                        </div>
+
+                        <div class="settings-card glass">
+                            <h3>AI Vocal Calibration</h3>
+                            <div class="setting-form-group">
+                                <label for="setting-voice-select">Voice Model Accent</label>
+                                <select id="setting-voice-select">
+                                    <option value="default">Default System voice</option>
+                                </select>
+                            </div>
+                            <div class="setting-form-range">
+                                <div class="range-labels">
+                                    <label for="setting-voice-pitch">Pitch (Modulation)</label>
+                                    <span id="pitch-val">1.0</span>
+                                </div>
+                                <input type="range" id="setting-voice-pitch" min="0.5" max="2.0" step="0.1" value="1.0">
+                            </div>
+                            <div class="setting-form-range">
+                                <div class="range-labels">
+                                    <label for="setting-voice-rate">Speech Speed</label>
+                                    <span id="rate-val">1.0</span>
+                                </div>
+                                <input type="range" id="setting-voice-rate" min="0.5" max="2.0" step="0.1" value="1.0">
+                            </div>
+                            <div class="voice-test-row">
+                                <button class="btn btn-secondary" id="test-voice-btn">Trigger Sample Prompt</button>
+                                <span class="voice-test-status" id="voice-test-feedback">Ready</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- Right Side: AI Companion Floating Panel -->
+        <aside class="ai-panel glass" id="ai-panel">
+            <div class="ai-header">
+                <div class="ai-brand-badge">
+                    <span class="pulse-ring"></span>
+                    <span class="badge-dot"></span>
+                    <span>ZENITH AI</span>
+                </div>
+                <button class="ai-collapse-btn" id="ai-toggle-btn" aria-label="Toggle Companion">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+
+            <!-- Voice Companion Interface -->
+            <div class="ai-body">
+                <!-- Visualizer Wave when speaking/listening -->
+                <div class="voice-visualizer-container" id="voice-visualizer">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+
+                <!-- AI status indicator -->
+                <div class="ai-status" id="ai-voice-status">Zenith is listening for "Hey Zenith..."</div>
+
+                <!-- Chat history -->
+                <div class="ai-chat-history" id="ai-chat-history">
+                    <div class="chat-bubble ai">
+                        Greetings, I am Zenith, your productivity companion. How can I assist you in optimizing your schedule today? You can type a command or hold the microphone button to talk.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input area -->
+            <div class="ai-footer">
+                <div class="chat-input-wrapper">
+                    <input type="text" id="ai-text-input" placeholder="Type command (e.g. 'prioritize')">
+                    <button class="mic-btn" id="ai-mic-btn" title="Speak to Zenith">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" id="mic-icon"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                    </button>
+                    <button class="send-btn" id="ai-send-btn" title="Send message">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Task Creation Modal -->
+    <div class="modal-backdrop" id="task-modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3>Plan New Task</h3>
+                <button class="close-modal" id="close-task-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="task-form">
+                    <div class="form-group">
+                        <label for="task-title">Task Name</label>
+                        <input type="text" id="task-title" required placeholder="e.g. Prepare Slide Deck">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-deadline">Deadline</label>
+                            <input type="datetime-local" id="task-deadline" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-duration">Estimated Duration (min)</label>
+                            <input type="number" id="task-duration" value="60" min="5" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-difficulty">Cognitive/Energy Difficulty</label>
+                            <select id="task-difficulty">
+                                <option value="low">Low Energy (Routine task)</option>
+                                <option value="medium" selected>Medium Energy (Requires focus)</option>
+                                <option value="high">High Energy (Deep work block)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-category">Category Tag</label>
+                            <select id="task-category">
+                                <option value="work">Work & Projects</option>
+                                <option value="study">Learning & Research</option>
+                                <option value="life">Personal & Health</option>
+                                <option value="finance">Finance & Bills</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="task-auto-decompose" checked>
+                            <span class="checkmark"></span>
+                            Auto-decompose into AI roadmap subtasks
+                        </label>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-task-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Zenith Schedule &amp; Prioritize</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Habit Creation Modal -->
+    <div class="modal-backdrop" id="habit-modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3>Build New Habit</h3>
+                <button class="close-modal" id="close-habit-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="habit-form">
+                    <div class="form-group">
+                        <label for="habit-name">Habit Name</label>
+                        <input type="text" id="habit-name" required placeholder="e.g. Read 15 minutes, Meditate">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="habit-frequency">Frequency</label>
+                            <select id="habit-frequency">
+                                <option value="daily">Daily</option>
+                                <option value="weekdays">Weekdays</option>
+                                <option value="weekly">Weekly</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="habit-time">Target Time</label>
+                            <input type="time" id="habit-time" value="08:00">
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" id="cancel-habit-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Habit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Focus Shield Fullscreen Overlay -->
+    <div class="focus-shield-overlay" id="focus-shield-overlay">
+        <div class="focus-shield-content">
+            <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" class="shield-pulse-icon">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <h2>Focus Shield Engaged</h2>
+            <p>Cognitive protection active. Distractions locked out.</p>
+        </div>
+    </div>
+
+    <!-- Showcase Detail Modal -->
+    <div class="modal-backdrop" id="showcase-detail-modal">
+        <div class="modal-content glass" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 id="showcase-modal-title">Feature details</h3>
+                <button class="close-modal" id="close-showcase-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body" id="showcase-modal-body" style="line-height: 1.6; font-size: 14.5px; color: var(--text-color); padding: 10px 0;">
+                <!-- Dynamically filled -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast Container for Context Reminders -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Application Script Engines -->
+    <script src="js/ai-engine.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/voice.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+{
+    "tasks": [
+        {
+            "id": "task-rem-1782461026",
+            "title": "Call a friend",
+            "deadline": "2026-06-26T13:34:00",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": true,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782461026-1",
+                    "title": "Perform reminder action",
+                    "completed": true
+                }
+            ],
+            "priorityScore": 0
+        },
+        {
+            "id": "task-rem-1782461084",
+            "title": "Drink water",
+            "deadline": "2026-06-26T13:35:12",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": true,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782461084-1",
+                    "title": "Perform reminder action",
+                    "completed": true
+                }
+            ],
+            "priorityScore": 0
+        },
+        {
+            "id": "task-rem-1782461225",
+            "title": "Stretch",
+            "deadline": "2026-06-26T13:38:04",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": false,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782461225-1",
+                    "title": "Perform reminder action",
+                    "completed": false
+                }
+            ],
+            "priorityScore": 83
+        }
+    ],
+    "habits": [
+        {
+            "id": "habit-py-1",
+            "name": "Deep Work Session (90 min)",
+            "frequency": "daily",
+            "time": "09:00",
+            "streak": 4,
+            "history": {}
+        }
+    ],
+    "settings": {
+        "username": "Harshit",
+        "dailyFocusTarget": 240,
+        "voiceURI": "default",
+        "pitch": 1.0,
+        "rate": 1.0
+    }
+}

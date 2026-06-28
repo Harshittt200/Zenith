@@ -1,0 +1,51 @@
+# Python
+
+__pycache__/
+
+*.py[cod]
+
+*.pyo
+
+*.pyd
+
+*.so
+
+venv/
+
+.env
+
+# Secrets
+
+credentials.json
+
+token.json
+
+# Database / Local Storage
+
+*.db
+
+*.sqlite3
+
+# Logs
+
+*.log
+
+# macOS
+
+.DS_Store
+
+# VS Code
+
+.vscode/
+
+# Python cache
+
+.pytest_cache/
+
+.mypy_cache/
+
+# Build
+
+dist/
+
+build/
