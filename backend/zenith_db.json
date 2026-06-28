@@ -1,67 +1,65 @@
 {
     "tasks": [
         {
-            "id": "task-rem-1782463229",
-            "title": "read",
-            "deadline": "2026-06-27T16:00:00Z",
-            "duration": 60,
-            "difficulty": "medium",
-            "category": "life",
-            "completed": true,
+            "id": "task-py-1",
+            "title": "Deconstruct Deep Learning Backpropagation",
+            "deadline": "2026-06-29T14:00:00Z",
+            "duration": 120,
+            "difficulty": "high",
+            "category": "study",
+            "completed": false,
+            "priorityScore": 84,
             "subtasks": [
                 {
-                    "id": "sub-rem-1782463229-1",
-                    "title": "Perform reminder action",
+                    "id": "sub-py-1-1",
+                    "title": "Read Chapter 3 textbook notes",
+                    "completed": true
+                },
+                {
+                    "id": "sub-py-1-2",
+                    "title": "Derive partial derivatives on paper",
+                    "completed": false
+                },
+                {
+                    "id": "sub-py-1-3",
+                    "title": "Code simple numpy layer test",
+                    "completed": false
+                }
+            ]
+        },
+        {
+            "id": "task-py-2",
+            "title": "Draft Zenith Product Pitch Deck",
+            "deadline": "2026-06-30T17:30:00Z",
+            "duration": 90,
+            "difficulty": "medium",
+            "category": "work",
+            "completed": false,
+            "priorityScore": 52,
+            "subtasks": [
+                {
+                    "id": "sub-py-2-1",
+                    "title": "Establish core value propositions",
+                    "completed": true
+                },
+                {
+                    "id": "sub-py-2-2",
+                    "title": "Create slide layouts & wireframe aesthetics",
                     "completed": true
                 }
-            ],
-            "priorityScore": 0
+            ]
         },
         {
-            "id": "task-rem-1782549854",
-            "title": "Eat food",
-            "deadline": "2026-06-27T14:14:27",
+            "id": "task-rem-1782642772",
+            "title": "Drink water",
+            "deadline": "2026-06-28T16:03:06",
             "duration": 60,
             "difficulty": "medium",
             "category": "life",
             "completed": false,
             "subtasks": [
                 {
-                    "id": "sub-rem-1782549854-1",
-                    "title": "Perform reminder action",
-                    "completed": false
-                }
-            ],
-            "priorityScore": 83
-        },
-        {
-            "id": "task-rem-1782549938",
-            "title": "Eat food",
-            "deadline": "2026-06-27T14:15:51",
-            "duration": 60,
-            "difficulty": "medium",
-            "category": "life",
-            "completed": false,
-            "subtasks": [
-                {
-                    "id": "sub-rem-1782549938-1",
-                    "title": "Perform reminder action",
-                    "completed": false
-                }
-            ],
-            "priorityScore": 83
-        },
-        {
-            "id": "task-rem-1782561460",
-            "title": "No tasks remaining",
-            "deadline": "2026-06-28T10:00:00",
-            "duration": 60,
-            "difficulty": "medium",
-            "category": "life",
-            "completed": false,
-            "subtasks": [
-                {
-                    "id": "sub-rem-1782561460-1",
+                    "id": "sub-rem-1782642772-1",
                     "title": "Perform reminder action",
                     "completed": false
                 }
@@ -75,10 +73,8 @@
             "name": "Deep Work Session (90 min)",
             "frequency": "daily",
             "time": "09:00",
-            "streak": 5,
-            "history": {
-                "2026-06-20": true
-            }
+            "streak": 4,
+            "history": {}
         }
     ],
     "settings": {

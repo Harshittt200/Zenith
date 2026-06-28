@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+import re
 from typing import TypedDict, List, Dict, Any, Optional
 
 from langgraph.graph import StateGraph, START, END
@@ -466,13 +467,17 @@ def chat_node(state: AgentState) -> Dict[str, Any]:
             prompt = (
                 f"You are Zenith, a friendly, modern, and highly intelligent AI productivity companion. "
                 f"Keep your replies conversational, supportive, and under 3-4 sentences. "
-                f"IMPORTANT: "
-                f"1. If the user explicitly asks you to set a reminder or schedule a task (e.g., 'remind me to review code tomorrow at 4pm' or 'schedule study block'), "
-                f"you MUST append a special system command tag to the end of your response in the format: "
+                f"IMPORTANT: You have direct control over the user's task planner. "
+                f"NEVER tell the user to add, schedule, remove, or clear tasks manually. You must perform the action yourself using these tags:\n"
+                f"1. To add a task or set a reminder (e.g., 'add a task to buy groceries' or 'remind me to call John tomorrow at 5pm'), "
+                f"you MUST append this tag to the end of your response: "
                 f"[REMINDER: title=\"TASK_TITLE\", deadline=\"ISO_DATETIME_STRING\"] "
-                f"where deadline is in ISO 8601 format (e.g., YYYY-MM-DDThh:mm). If no date or time is specified, use tomorrow at 10 AM.\n"
-                f"2. If the user asks you to clear, delete, wipe, or remove all tasks, or clear completed tasks (e.g., 'clear all tasks', 'delete completed tasks'), "
-                f"you MUST append a system command tag to the end of your response in the format: "
+                f"where deadline is in ISO 8601 format (e.g., YYYY-MM-DDThh:mm). If no time is specified, use tomorrow at 10 AM.\n"
+                f"2. To delete, remove, or cancel a specific task (e.g., 'remove task buy milk' or 'delete the study task'), "
+                f"you MUST append this tag to the end of your response: "
+                f"[DELETE_TASK: title=\"TASK_TITLE\"]\n"
+                f"3. To clear all tasks or clear completed tasks (e.g., 'clear all tasks', 'wipe completed tasks'), "
+                f"you MUST append this tag: "
                 f"[CLEAR_TASKS: type=\"all\" | \"completed\"]\n"
                 f"Current system date and time is: {datetime.datetime.now().isoformat()}.\n"
                 f"Previous chat history:\n{history_text}"
@@ -502,8 +507,16 @@ def chat_node(state: AgentState) -> Dict[str, Any]:
             updated_tasks = [t for t in updated_tasks if not t.get("completed")]
             log_agent_thought("ChatAgent", "Action", "LLM request: Clear completed tasks.", state)
 
+    # Parse LLM delete task tag if present
+    delete_match = re.search(r'\[DELETE_TASK:\s*title="([^"]+)"\]', reply)
+    if delete_match:
+        task_title_to_delete = delete_match.group(1).lower().strip()
+        reply = re.sub(r'\[DELETE_TASK:[^\]]+\]', '', reply).strip()
+        initial_count = len(updated_tasks)
+        updated_tasks = [t for t in updated_tasks if t.get("title", "").lower().strip() != task_title_to_delete]
+        log_agent_thought("ChatAgent", "Action", f"LLM request: Delete task '{task_title_to_delete}'. Remaining: {len(updated_tasks)}", state)
+
     # Parse LLM reminder tag if present
-    import re
     reminder_match = re.search(r'\[REMINDER:\s*title="([^"]+)",\s*deadline="([^"]+)"\]', reply)
     if reminder_match:
         task_title = reminder_match.group(1)
@@ -531,82 +544,96 @@ def chat_node(state: AgentState) -> Dict[str, Any]:
         reminder_created = True
 
     # 2. Fallback Router / Local Regex Parser
-    if LLM_failed or (not reminder_created and any(w in msg.lower() for w in ['remind', 'reminder', 'remainder', 'schedule', 'todo', 'task', 'call', 'clear', 'delete', 'remove', 'wipe'])):
+    if LLM_failed or (not reminder_created and any(w in msg.lower() for w in ['remind', 'reminder', 'remainder', 'schedule', 'todo', 'task', 'call', 'clear', 'delete', 'remove', 'wipe', 'add', 'create'])):
         msg_lower = msg.lower()
         
-        # Check if user wants to clear tasks locally
-        if any(w in msg_lower for w in ['clear', 'delete', 'remove', 'wipe']) and any(t in msg_lower for t in ['task', 'todo', 'schedule', 'reminder']):
-            if 'completed' in msg_lower or 'done' in msg_lower or 'finished' in msg_lower:
-                updated_tasks = [t for t in updated_tasks if not t.get("completed")]
-                reply = "I have successfully cleared all completed tasks from your planner."
-                log_agent_thought("ChatAgent", "Action", "Local Parser: Clear completed tasks.", state)
-            else:
-                updated_tasks = []
-                reply = "Done! I have cleared all tasks from your planner."
-                log_agent_thought("ChatAgent", "Action", "Local Parser: Clear all tasks.", state)
+        # A. Clear all / completed tasks
+        if any(w in msg_lower for w in ['clear all', 'delete all', 'wipe all', 'remove all']) and any(t in msg_lower for t in ['task', 'todo', 'schedule', 'reminder']):
+            updated_tasks = []
+            reply = "Done! I have cleared all tasks from your planner."
+            log_agent_thought("ChatAgent", "Action", "Local Parser: Clear all tasks.", state)
+            reminder_created = True
+        elif any(w in msg_lower for w in ['clear completed', 'delete completed', 'wipe completed', 'remove completed']):
+            updated_tasks = [t for t in updated_tasks if not t.get("completed")]
+            reply = "I have successfully cleared all completed tasks from your planner."
+            log_agent_thought("ChatAgent", "Action", "Local Parser: Clear completed tasks.", state)
             reminder_created = True
             
-        # Look for reminder phrases, supporting spelling variations like "remainder"
-        local_match = re.search(r'(?:remind\s+(?:me\s+)?to|reminder\s+to|remainder\s+to|schedule|create\s+task|give\s+me\s+(?:a\s+)?(?:reminder|remainder)\s+to)\s+(.+?)(?:\s+(?:tomorrow|today|at|on)\s+.*)?$', msg, re.IGNORECASE)
-        if local_match:
-            task_title = local_match.group(1).strip()
-            
-            # Remove time specifications from title if they got caught
-            task_title = re.sub(r'\s+at\s+.*$', '', task_title, flags=re.IGNORECASE).strip()
-            task_title = re.sub(r'\s+today.*$', '', task_title, flags=re.IGNORECASE).strip()
-            task_title = re.sub(r'\s+tomorrow.*$', '', task_title, flags=re.IGNORECASE).strip()
-            
-            # Default time target: tomorrow at 10 AM
-            target_dt = datetime.datetime.now()
-            
-            # Check if time is specified (e.g. "at 1.31 pm", "at 1:30")
-            time_match = re.search(r'at\s+(\d+)(?:[:\.](\d+))?\s*(pm|am)?', msg_lower)
-            if time_match:
-                hr = int(time_match.group(1))
-                mn = int(time_match.group(2)) if time_match.group(2) else 0
-                period = time_match.group(3)
+        # B. Delete a specific task (e.g., "delete task buy milk" or "remove task write essay")
+        elif any(w in msg_lower for w in ['delete task', 'remove task', 'cancel task', 'delete the task', 'remove the task']):
+            target_title = re.sub(r'^(?:delete|remove|cancel)(?:\s+the)?\s+task\s+', '', msg_lower).strip()
+            initial_count = len(updated_tasks)
+            updated_tasks = [t for t in updated_tasks if t.get("title", "").lower().strip() != target_title]
+            if len(updated_tasks) < initial_count:
+                reply = f"I have successfully removed the task '{target_title}' from your planner."
+            else:
+                reply = f"I couldn't find a task titled '{target_title}' to remove. Please check the title."
+            log_agent_thought("ChatAgent", "Action", f"Local Parser: Delete task '{target_title}'. Remaining: {len(updated_tasks)}", state)
+            reminder_created = True
+
+        # C. Add a task / reminder
+        else:
+            # Look for reminder phrases, supporting spelling variations like "remainder"
+            local_match = re.search(r'(?:remind\s+(?:me\s+)?to|reminder\s+to|remainder\s+to|schedule|create\s+task|add\s+task|give\s+me\s+(?:a\s+)?(?:reminder|remainder)\s+to)\s+(.+?)(?:\s+(?:tomorrow|today|at|on)\s+.*)?$', msg, re.IGNORECASE)
+            if local_match:
+                task_title = local_match.group(1).strip()
                 
-                if period == 'pm' and hr < 12:
-                    hr += 12
-                elif period == 'am' and hr == 12:
-                    hr = 0
+                # Remove time specifications from title if they got caught
+                task_title = re.sub(r'\s+at\s+.*$', '', task_title, flags=re.IGNORECASE).strip()
+                task_title = re.sub(r'\s+today.*$', '', task_title, flags=re.IGNORECASE).strip()
+                task_title = re.sub(r'\s+tomorrow.*$', '', task_title, flags=re.IGNORECASE).strip()
+                
+                # Default time target: tomorrow at 10 AM
+                target_dt = datetime.datetime.now()
+                
+                # Check if time is specified (e.g. "at 1.31 pm", "at 1:30")
+                time_match = re.search(r'at\s+(\d+)(?:[:\.](\d+))?\s*(pm|am)?', msg_lower)
+                if time_match:
+                    hr = int(time_match.group(1))
+                    mn = int(time_match.group(2)) if time_match.group(2) else 0
+                    period = time_match.group(3)
                     
-                target_dt = target_dt.replace(hour=hr, minute=mn, second=0, microsecond=0)
+                    if period == 'pm' and hr < 12:
+                        hr += 12
+                    elif period == 'am' and hr == 12:
+                        hr = 0
+                        
+                    target_dt = target_dt.replace(hour=hr, minute=mn, second=0, microsecond=0)
+                    
+                    # Adjust day if "tomorrow"
+                    if "tomorrow" in msg_lower:
+                        target_dt += datetime.timedelta(days=1)
+                    # If calculated time is in the past for today, schedule it for tomorrow
+                    elif target_dt < datetime.datetime.now() and "today" not in msg_lower:
+                        target_dt += datetime.timedelta(days=1)
+                else:
+                    target_dt = target_dt + datetime.timedelta(days=1)
+                    target_dt = target_dt.replace(hour=10, minute=0, second=0, microsecond=0)
+                    
+                task_deadline = target_dt.isoformat() + "Z"
                 
-                # Adjust day if "tomorrow"
-                if "tomorrow" in msg_lower:
-                    target_dt += datetime.timedelta(days=1)
-                # If calculated time is in the past for today, schedule it for tomorrow
-                elif target_dt < datetime.datetime.now() and "today" not in msg_lower:
-                    target_dt += datetime.timedelta(days=1)
-            else:
-                target_dt = target_dt + datetime.timedelta(days=1)
-                target_dt = target_dt.replace(hour=10, minute=0, second=0, microsecond=0)
+                log_agent_thought("ChatAgent", "Action", f"Local Regex parsed reminder. Scheduling '{task_title}' for {task_deadline}", state)
                 
-            task_deadline = target_dt.isoformat() + "Z"
-            
-            log_agent_thought("ChatAgent", "Action", f"Local Regex parsed reminder. Scheduling '{task_title}' for {task_deadline}", state)
-            
-            new_task = {
-                "id": f"task-rem-{int(datetime.datetime.now().timestamp())}",
-                "title": task_title,
-                "deadline": task_deadline,
-                "duration": 60,
-                "difficulty": "medium",
-                "category": "life",
-                "completed": False,
-                "subtasks": [
-                    {"id": f"sub-rem-{int(datetime.datetime.now().timestamp())}-1", "title": "Perform reminder action", "completed": False}
-                ],
-                "priorityScore": 60
-            }
-            updated_tasks.append(new_task)
-            reminder_created = True
-            
-            time_display = target_dt.strftime("%I:%M %p")
-            day_display = "today" if target_dt.date() == datetime.date.today() else "tomorrow"
-            
-            reply = f"Sure! I have set a reminder and scheduled the task: '{task_title}' for {day_display} at {time_display}. You can see it in your Tasks tab."
+                new_task = {
+                    "id": f"task-rem-{int(datetime.datetime.now().timestamp())}",
+                    "title": task_title,
+                    "deadline": task_deadline,
+                    "duration": 60,
+                    "difficulty": "medium",
+                    "category": "life",
+                    "completed": False,
+                    "subtasks": [
+                        {"id": f"sub-rem-{int(datetime.datetime.now().timestamp())}-1", "title": "Perform reminder action", "completed": False}
+                    ],
+                    "priorityScore": 60
+                }
+                updated_tasks.append(new_task)
+                reminder_created = True
+                
+                time_display = target_dt.strftime("%I:%M %p")
+                day_display = "today" if target_dt.date() == datetime.date.today() else "tomorrow"
+                
+                reply = f"Sure! I have added the task '{task_title}' to your planner for {day_display} at {time_display}."
 
     if not reply:
         msg_lower = msg.lower()

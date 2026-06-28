@@ -175,43 +175,50 @@ const VoiceAssistant = {
         const cmd = text.toLowerCase().trim();
         console.log('Zenith parsing voice command:', cmd);
 
+        const respond = (replyText) => {
+            this.speak(replyText);
+            if (window.ZenithApp) {
+                window.ZenithApp.appendChatBubble(replyText, 'ai');
+            }
+        };
+
         // 1. Navigation Commands
         if (cmd.includes('show dashboard') || cmd.includes('go to dashboard') || cmd.includes('open dashboard')) {
-            this.speak("Navigating to dashboard.");
+            respond("Navigating to dashboard.");
             if (this.callbacks.onCommandNavigate) this.callbacks.onCommandNavigate('dashboard');
             return;
         }
         if (cmd.includes('show tasks') || cmd.includes('go to tasks') || cmd.includes('open tasks') || cmd.includes('open planner')) {
-            this.speak("Opening your task planner.");
+            respond("Opening your task planner.");
             if (this.callbacks.onCommandNavigate) this.callbacks.onCommandNavigate('tasks');
             return;
         }
         if (cmd.includes('show calendar') || cmd.includes('go to calendar') || cmd.includes('open calendar')) {
-            this.speak("Viewing your calendar blocks.");
+            respond("Viewing your calendar blocks.");
             if (this.callbacks.onCommandNavigate) this.callbacks.onCommandNavigate('calendar');
             return;
         }
         if (cmd.includes('show habits') || cmd.includes('go to habits') || cmd.includes('open habits')) {
-            this.speak("Opening habits tracker.");
+            respond("Opening habits tracker.");
             if (this.callbacks.onCommandNavigate) this.callbacks.onCommandNavigate('habits');
             return;
         }
         if (cmd.includes('show settings') || cmd.includes('go to settings') || cmd.includes('open settings')) {
-            this.speak("Opening system configurations.");
+            respond("Opening system configurations.");
             if (this.callbacks.onCommandNavigate) this.callbacks.onCommandNavigate('settings');
             return;
         }
 
         // 2. Action: Optimize schedule
         if (cmd.includes('optimize schedule') || cmd.includes('re-arrange calendar') || cmd.includes('fix schedule')) {
-            this.speak("Recalculating calendar blocks to minimize context fatigue.");
+            respond("Recalculating calendar blocks to minimize context fatigue.");
             if (this.callbacks.onCommandOptimize) this.callbacks.onCommandOptimize();
             return;
         }
 
         // 3. Action: Clear database / Reset
         if (cmd.includes('clear completed tasks') || cmd.includes('clean finished tasks')) {
-            this.speak("Clearing completed tasks from your planner.");
+            respond("Clearing completed tasks from your planner.");
             if (this.callbacks.onCommandClearCompleted) this.callbacks.onCommandClearCompleted();
             return;
         }
@@ -220,10 +227,10 @@ const VoiceAssistant = {
         if (cmd.startsWith('add task') || cmd.startsWith('create task')) {
             const taskContent = text.replace(/^(add task|create task)\s+/i, '');
             if (taskContent.trim()) {
-                this.speak(`Understood. Adding task: ${taskContent}`);
+                respond(`Understood. Adding task: ${taskContent}`);
                 if (this.callbacks.onCommandAddTask) this.callbacks.onCommandAddTask(taskContent);
             } else {
-                this.speak("What is the name of the task you would like to schedule?");
+                respond("What is the name of the task you would like to schedule?");
             }
             return;
         }
@@ -232,17 +239,17 @@ const VoiceAssistant = {
         if (cmd.includes('how is my day looking') || cmd.includes('what are my tasks') || cmd.includes('do i have deadlines')) {
             if (this.callbacks.onStatusQuery) {
                 const responseText = this.callbacks.onStatusQuery();
-                this.speak(responseText);
+                respond(responseText);
             }
             return;
         }
 
         if (cmd.includes('hello') || cmd.includes('hey zenith') || cmd.includes('hi zenith')) {
-            this.speak("Hello there! I am calibrated and ready to optimize your day. Try saying show tasks or optimize schedule.");
+            respond("Hello there! I am calibrated and ready to optimize your day. Try saying show tasks or optimize schedule.");
             return;
         }
 
         // Catch-all response
-        this.speak(`I heard you say: "${text}". If this is a task, try prefixing it with add task, or navigate using show calendar.`);
+        respond(`I heard you say: "${text}". If this is a task, try prefixing it with add task, or navigate using show calendar.`);
     }
 };
