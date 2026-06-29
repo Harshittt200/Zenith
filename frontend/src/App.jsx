@@ -124,12 +124,21 @@ export default function App() {
 
   // 2. Load API backend details & voice hooks
   useEffect(() => {
+    // Clear Google Calendar session on load/reload to force a new sign-in
+    fetch(`${API_URL}/api/logout`, { method: 'POST' }).catch(() => {});
+
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
     window.scrollTo(0, 0);
     fetchInitialData();
     initSpeechRecognition();
+
+    const handleUnload = () => {
+      navigator.sendBeacon(`${API_URL}/api/logout`);
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
   }, []);
 
   // 3. Welcome Screen Scroll event blocker

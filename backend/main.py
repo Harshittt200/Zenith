@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 
 from agents import planner_graph, scheduler_graph, chat_graph, prioritizer_node, insight_node
+from google_calendar import TOKEN_PATH
 
 app = FastAPI(title="Zenith LangGraph Server")
 
@@ -390,6 +391,17 @@ def save_settings(payload: Settings):
     db["settings"] = payload.model_dump()
     save_db(db)
     return db["settings"]
+
+# Logout / Token Deletion
+@app.post("/api/logout")
+def logout():
+    if os.path.exists(TOKEN_PATH):
+        try:
+            os.remove(TOKEN_PATH)
+            print("[Google Calendar] token.json deleted successfully on logout.")
+        except Exception as e:
+            print(f"[Google Calendar] Error deleting token.json: {e}")
+    return {"status": "success"}
 
 # Serve vanilla HTML/CSS/JS frontend files
 frontend_dist_dir = os.path.join(os.path.dirname(BASE_DIR), 'frontend', 'dist')

@@ -36,7 +36,7 @@ def get_calendar_service():
         except Exception as e:
             print(f"[Google Calendar] Error loading credentials from GOOGLE_CALENDAR_TOKEN env: {e}")
 
-    # 2. Try loading from token.json file
+    # 2. Try loading from token.json file (local development session cache)
     if not creds and os.path.exists(TOKEN_PATH):
         try:
             creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
@@ -48,14 +48,13 @@ def get_calendar_service():
         if creds and creds.expired and creds.refresh_token:
             try:
                 creds.refresh(Request())
-                # Only write to disk if the directory is writable
                 if os.access(os.path.dirname(TOKEN_PATH), os.W_OK):
                     with open(TOKEN_PATH, 'w') as token:
                         token.write(creds.to_json())
             except Exception as e:
                 print(f"[Google Calendar] Error refreshing credentials: {e}")
                 creds = None
-        
+
         # If still no valid credentials, check for credentials.json to initiate OAuth
         if not creds:
             if not os.path.exists(CREDENTIALS_PATH):
@@ -75,9 +74,9 @@ def get_calendar_service():
             is_authenticating = True
             try:
                 flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
-                # Running local server for authentication
-                creds = flow.run_local_server(port=0)
-                # Save the credentials for the next run
+                # Running local server for authentication (forces Google account chooser screen)
+                creds = flow.run_local_server(port=0, prompt='select_account')
+                # Save the credentials for the session
                 with open(TOKEN_PATH, 'w') as token:
                     token.write(creds.to_json())
             except Exception as e:
@@ -115,7 +114,10 @@ def sync_events_to_google_calendar(blocks):
             user_timezone = 'UTC'
 
         # 1. Fetch events to find and delete existing Zenith blocks for the current week
-        today = datetime.date.today()
+        import zoneinfo
+        tz = zoneinfo.ZoneInfo(user_timezone)
+        today = datetime.datetime.now(tz).date()
+        
         monday = today - datetime.timedelta(days=today.weekday())
         sunday = monday + datetime.timedelta(days=6)
         
@@ -204,8 +206,19 @@ def get_external_calendar_events():
         return []
 
     try:
-        # Calculate current week's Monday and Sunday
-        today = datetime.date.today()
+        # Get the timezone of the primary calendar to calculate the correct local 'today'
+        try:
+            calendar = service.calendars().get(calendarId='primary').execute()
+            user_timezone = calendar.get('timeZone', 'UTC')
+        except Exception as e:
+            print(f"[Google Calendar] Error getting calendar timezone, defaulting to UTC: {e}")
+            user_timezone = 'UTC'
+
+        # Calculate current week's Monday and Sunday based on user's timezone
+        import zoneinfo
+        tz = zoneinfo.ZoneInfo(user_timezone)
+        today = datetime.datetime.now(tz).date()
+        
         monday = today - datetime.timedelta(days=today.weekday())
         sunday = monday + datetime.timedelta(days=6)
         

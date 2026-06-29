@@ -31,6 +31,9 @@ const ZenithApp = {
      * Bootstraps application, loads data from localStorage, binds listeners
      */
     async init() {
+        // Clear Google Calendar session on load/reload to force a new sign-in
+        fetch(`${API_URL}/api/logout`, { method: 'POST' }).catch(() => {});
+
         this.loadLocalStorage();
         this.bindEvents();
         this.setupVoiceCallbacks();
@@ -630,10 +633,6 @@ const ZenithApp = {
         if (targetBtn) {
             targetBtn.classList.add('active');
         }
-
-        // Select canvas color based on light/dark mode
-        ctx.fillStyle = isDark ? 'rgba(139, 92, 246, 0.12)' : 'rgba(65, 105, 225, 0.08)';
-        ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.015)' : 'rgba(65, 105, 225, 0.04)';
 
         // Renders specifics based on selected view
         if (viewId === 'calendar') {
@@ -1389,4 +1388,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('notify-sim-btn').addEventListener('click', () => {
         ZenithApp.triggerContextReminderSim();
     });
+});
+
+// Automatically logout / delete token.json when the user closes the tab or window
+window.addEventListener('beforeunload', () => {
+    navigator.sendBeacon(`${API_URL}/api/logout`);
 });
