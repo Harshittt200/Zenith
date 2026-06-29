@@ -24,21 +24,34 @@ def get_calendar_service():
     """
     global is_authenticating
     creds = None
-    # The file token.json stores the user's access and refresh tokens
-    if os.path.exists(TOKEN_PATH):
+
+    # 1. Try loading from environment variable (recommended for production/Render)
+    env_token = os.environ.get("GOOGLE_CALENDAR_TOKEN")
+    if env_token:
+        try:
+            import json
+            token_info = json.loads(env_token)
+            creds = Credentials.from_authorized_user_info(token_info, SCOPES)
+            print("[Google Calendar] Successfully loaded credentials from GOOGLE_CALENDAR_TOKEN environment variable.")
+        except Exception as e:
+            print(f"[Google Calendar] Error loading credentials from GOOGLE_CALENDAR_TOKEN env: {e}")
+
+    # 2. Try loading from token.json file
+    if not creds and os.path.exists(TOKEN_PATH):
         try:
             creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
         except Exception as e:
             print(f"[Google Calendar] Error loading token.json: {e}")
-            return None
 
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             try:
                 creds.refresh(Request())
-                with open(TOKEN_PATH, 'w') as token:
-                    token.write(creds.to_json())
+                # Only write to disk if the directory is writable
+                if os.access(os.path.dirname(TOKEN_PATH), os.W_OK):
+                    with open(TOKEN_PATH, 'w') as token:
+                        token.write(creds.to_json())
             except Exception as e:
                 print(f"[Google Calendar] Error refreshing credentials: {e}")
                 creds = None
@@ -49,6 +62,12 @@ def get_calendar_service():
                 print(f"[Google Calendar] credentials.json not found at {CREDENTIALS_PATH}. Calendar Sync is disabled.")
                 return None
             
+            # CRITICAL: Prevent hanging/crashing in headless production environments like Render
+            is_headless = os.environ.get("RENDER") == "true"
+            if is_headless:
+                print("[Google Calendar] Headless/Production environment detected. Skipping interactive browser OAuth flow.")
+                return None
+
             if is_authenticating:
                 print("[Google Calendar] Authentication already in progress. Skipping duplicate browser tab request.")
                 return None

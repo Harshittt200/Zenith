@@ -8,7 +8,7 @@
             "difficulty": "high",
             "category": "study",
             "completed": false,
-            "priorityScore": 84,
+            "priorityScore": 91,
             "subtasks": [
                 {
                     "id": "sub-py-1-1",
@@ -35,7 +35,7 @@
             "difficulty": "medium",
             "category": "work",
             "completed": false,
-            "priorityScore": 52,
+            "priorityScore": 64,
             "subtasks": [
                 {
                     "id": "sub-py-2-1",
@@ -60,6 +60,40 @@
             "subtasks": [
                 {
                     "id": "sub-rem-1782642772-1",
+                    "title": "Perform reminder action",
+                    "completed": false
+                }
+            ],
+            "priorityScore": 83
+        },
+        {
+            "id": "task-rem-1782707601",
+            "title": "Check in with yourself",
+            "deadline": "2026-06-30T10:00:00",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": false,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782707601-1",
+                    "title": "Perform reminder action",
+                    "completed": false
+                }
+            ],
+            "priorityScore": 70
+        },
+        {
+            "id": "task-rem-1782707622",
+            "title": "Quick check-in reminder",
+            "deadline": "2026-06-29T10:03:49",
+            "duration": 60,
+            "difficulty": "medium",
+            "category": "life",
+            "completed": false,
+            "subtasks": [
+                {
+                    "id": "sub-rem-1782707622-1",
                     "title": "Perform reminder action",
                     "completed": false
                 }

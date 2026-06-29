@@ -2,6 +2,15 @@
    Zenith - Main Orchestrator & UI Controller
    ========================================================================== */
 
+const API_URL = (() => {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        if (window.location.port !== '8000') {
+            return 'http://127.0.0.1:8000';
+        }
+    }
+    return ''; // Relative path for production
+})();
+
 const ZenithApp = {
     state: {
         tasks: [],
@@ -69,9 +78,9 @@ const ZenithApp = {
     async syncWithBackend() {
         try {
             const [tasksRes, habitsRes, settingsRes] = await Promise.all([
-                fetch('/api/tasks'),
-                fetch('/api/habits'),
-                fetch('/api/settings')
+                fetch(`${API_URL}/api/tasks`),
+                fetch(`${API_URL}/api/habits`),
+                fetch(`${API_URL}/api/settings`)
             ]);
             
             if (tasksRes.ok) this.state.tasks = await tasksRes.json();
@@ -1215,7 +1224,7 @@ const ZenithApp = {
     async gcalSyncAction() {
         this.showToast('📅 Google Calendar Syncing', 'Synchronizing scheduled timeblocks with Google Calendar API...');
         try {
-            const response = await fetch('/api/optimize', { method: 'POST' });
+            const response = await fetch(`${API_URL}/api/optimize`, { method: 'POST' });
             if (response.ok) {
                 this.showToast('✅ Sync Completed', 'Google Calendar successfully synchronized with Zenith planning.');
                 VoiceAssistant.speak("Google calendar synchronization is complete.");
@@ -1261,7 +1270,7 @@ const ZenithApp = {
                 });
             }
 
-            const response = await fetch('/api/chat', {
+            const response = await fetch(`${API_URL}/api/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -1279,7 +1288,7 @@ const ZenithApp = {
                 VoiceAssistant.speak(data.reply);
 
                 // Fetch updated tasks from backend since AI chat might have added a reminder!
-                const tasksRes = await fetch('/api/tasks');
+                const tasksRes = await fetch(`${API_URL}/api/tasks`);
                 if (tasksRes.ok) {
                     const updatedTasks = await tasksRes.json();
                     this.state.tasks = updatedTasks;

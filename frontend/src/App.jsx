@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon } from 'lucide-react';
+import { API_URL } from './config';
 
 // Modular components
 import WelcomeScreen from './components/WelcomeScreen';
@@ -203,19 +204,19 @@ export default function App() {
 
   const fetchInitialData = async () => {
     try {
-      const tasksRes = await fetch('/api/tasks');
+      const tasksRes = await fetch(`${API_URL}/api/tasks`);
       if (tasksRes.ok) setTasks(await tasksRes.json());
 
-      const habitsRes = await fetch('/api/habits');
+      const habitsRes = await fetch(`${API_URL}/api/habits`);
       if (habitsRes.ok) setHabits(await habitsRes.json());
 
-      const settingsRes = await fetch('/api/settings');
+      const settingsRes = await fetch(`${API_URL}/api/settings`);
       if (settingsRes.ok) setSettings(await settingsRes.json());
 
-      const insightsRes = await fetch('/api/insights');
+      const insightsRes = await fetch(`${API_URL}/api/insights`);
       if (insightsRes.ok) setInsights(await insightsRes.json());
 
-      const calRes = await fetch('/api/calendar');
+      const calRes = await fetch(`${API_URL}/api/calendar`);
       if (calRes.ok) {
         const calData = await calRes.json();
         setCalendarBlocks(calData.calendar_blocks || []);
@@ -297,7 +298,7 @@ export default function App() {
     triggerToast("🤖 Zenith Agent Decomposing", "Formulating task outlines...");
 
     try {
-      const res = await fetch('/api/tasks', {
+      const res = await fetch(`${API_URL}/api/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -325,7 +326,7 @@ export default function App() {
 
   const toggleTaskCompletion = async (taskId) => {
     try {
-      const res = await fetch(`/api/tasks/${taskId}/toggle`, { method: 'PATCH' });
+      const res = await fetch(`${API_URL}/api/tasks/${taskId}/toggle`, { method: 'PATCH' });
       if (res.ok) {
         const updated = await res.json();
         setTasks(prev => prev.map(t => t.id === taskId ? updated : t));
@@ -341,7 +342,7 @@ export default function App() {
 
   const toggleSubtaskCompletion = async (taskId, subtaskId) => {
     try {
-      const res = await fetch(`/api/tasks/${taskId}/subtask/${subtaskId}/toggle`, { method: 'PATCH' });
+      const res = await fetch(`${API_URL}/api/tasks/${taskId}/subtask/${subtaskId}/toggle`, { method: 'PATCH' });
       if (res.ok) {
         const updated = await res.json();
         setTasks(prev => prev.map(t => t.id === taskId ? updated : t));
@@ -353,7 +354,7 @@ export default function App() {
 
   const deleteTask = async (taskId) => {
     try {
-      const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URL}/api/tasks/${taskId}`, { method: 'DELETE' });
       if (res.ok) {
         setTasks(prev => prev.filter(t => t.id !== taskId));
         triggerToast("🗑️ Task Cleared", "Agenda details updated.");
@@ -366,7 +367,7 @@ export default function App() {
   const optimizeSchedule = async () => {
     triggerToast("🤖 Optimization Running", "Regulating schedule blocks...");
     try {
-      const res = await fetch('/api/optimize', { method: 'POST' });
+      const res = await fetch(`${API_URL}/api/optimize`, { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
         setCalendarBlocks(data.calendar_blocks || []);
@@ -383,7 +384,7 @@ export default function App() {
   const refreshCalendar = async () => {
     triggerToast("🔄 Syncing External Blocks", "Updating latest calendar items...");
     try {
-      const res = await fetch('/api/calendar');
+      const res = await fetch(`${API_URL}/api/calendar`);
       if (res.ok) {
         const data = await res.json();
         setCalendarBlocks(data.calendar_blocks || []);
@@ -396,7 +397,7 @@ export default function App() {
 
   const refreshCalendarSilent = async () => {
     try {
-      const res = await fetch('/api/calendar');
+      const res = await fetch(`${API_URL}/api/calendar`);
       if (res.ok) {
         const data = await res.json();
         setCalendarBlocks(data.calendar_blocks || []);
@@ -412,7 +413,7 @@ export default function App() {
     setHabitModalOpen(false);
 
     try {
-      const res = await fetch('/api/habits', {
+      const res = await fetch(`${API_URL}/api/habits`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, frequency, time })
@@ -430,7 +431,7 @@ export default function App() {
 
   const toggleHabitCompletion = async (habitId, dateStr) => {
     try {
-      const res = await fetch(`/api/habits/${habitId}/toggle/${dateStr}`, { method: 'POST' });
+      const res = await fetch(`${API_URL}/api/habits/${habitId}/toggle/${dateStr}`, { method: 'POST' });
       if (res.ok) {
         const updated = await res.json();
         setHabits(prev => prev.map(h => h.id === habitId ? updated : h));
@@ -442,7 +443,7 @@ export default function App() {
 
   const deleteHabit = async (habitId) => {
     try {
-      const res = await fetch(`/api/habits/${habitId}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URL}/api/habits/${habitId}`, { method: 'DELETE' });
       if (res.ok) {
         setHabits(prev => prev.filter(h => h.id !== habitId));
         triggerToast("🗑️ Habit Removed", "Habit tracker updated.");
@@ -461,7 +462,7 @@ export default function App() {
     setIsTyping(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -488,7 +489,7 @@ export default function App() {
 
   const saveSettings = async (updatedSettings) => {
     try {
-      const res = await fetch('/api/settings', {
+      const res = await fetch(`${API_URL}/api/settings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedSettings)
