@@ -7,8 +7,13 @@ const API_URL = (() => {
         if (window.location.port !== '8000') {
             return 'http://127.0.0.1:8000';
         }
+        return '';
     }
-    return ''; // Relative path for production
+    // If running on Vercel, point to the Render backend
+    if (window.location.hostname.includes('vercel.app')) {
+        return 'https://zenith-1p9m.onrender.com';
+    }
+    return ''; // Relative path for production if served by Render itself
 })();
 
 const ZenithApp = {
