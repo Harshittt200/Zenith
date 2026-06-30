@@ -13,7 +13,7 @@ from google_calendar import TOKEN_PATH
 
 app = FastAPI(title="Zenith LangGraph Server")
 
-# Enable CORS for React frontend (Vite dev server ports)
+# Enable CORS for React frontend (Vite dev server ports & Vercel production/preview domains)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -24,6 +24,7 @@ app.add_middleware(
         "http://127.0.0.1:5174",
         "http://127.0.0.1:5175",
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
